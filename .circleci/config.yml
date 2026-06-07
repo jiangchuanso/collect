@@ -33,6 +33,10 @@ jobs:
     <<: *android_config
     steps:
       - checkout
+      - run:
+          name: Validate Gradlew Wrapper
+          command: ./validate-gradle-wrapper.sh
+
       - restore_cache:
           keys:
             - compile-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
@@ -165,7 +169,7 @@ jobs:
 
       - run:
           name: Copy gradle config
-          command: mkdir -p ~/.gradle && cp .circleci/gradle.properties ~/.gradle/gradle.properties
+          command: mkdir -p ~/.gradle && cp .circleci/gradle-test-app.properties ~/.gradle/gradle.properties
 
       - run:
           name: Generate list of test classes
@@ -343,7 +347,7 @@ workflows:
             branches:
               ignore:
                 - master
-                - /^v((20)[0-9]{2})\.\d+\.\d+$/
+                - /^v\d+\.\d+.x$/
       - compile:
           requires:
             - hold_pr
@@ -370,7 +374,7 @@ workflows:
             branches:
               only:
                 - master
-                - /^v((20)[0-9]{2})\.\d+\.\d+$/
+                - /^v\d+\.\d+.x$/
       - check_quality:
           requires:
             - compile
@@ -412,7 +416,7 @@ workflows:
       - compile:
           filters:
             tags:
-              only: /^v((20)[0-9]{2})\.\d+\.\d+$/ # matches semvers like v1.2.3
+              only: /^v\d+\.\d+.\d+$/
             branches:
               ignore: /.*/
       - create_dependency_backup:
@@ -420,7 +424,7 @@ workflows:
             - compile
           filters:
             tags:
-              only: /^v((20)[0-9]{2})\.\d+\.\d+$/ # matches semvers like v1.2.3
+              only: /^v\d+\.\d+.\d+$/
             branches:
               ignore: /.*/
 

@@ -79,7 +79,7 @@ the specific language governing permissions and limitations under the License.
 
     <application
         android:name=".application.Collect"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/notes"
         android:installLocation="auto"
         android:label="@string/collect_app_name"
@@ -127,7 +127,10 @@ the specific language governing permissions and limitations under the License.
             android:name="org.odk.collect.draw.DrawActivity"
             android:theme="@style/Theme.Collect"
             tools:replace="android:theme"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:resizeableActivity="false">
+            <property android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY" android:value="true" />
+        </activity>
         <activity android:name=".activities.InstanceChooserList" />
         <activity
             android:name=".formlists.blankformlist.BlankFormListActivity"

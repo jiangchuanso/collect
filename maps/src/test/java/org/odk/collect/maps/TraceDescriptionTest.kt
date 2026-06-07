@@ -8,6 +8,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.odk.collect.maps.markers.MarkerDescription
 import org.odk.collect.maps.markers.MarkerIconDescription
+import org.odk.collect.maps.traces.TraceDescription
+import org.odk.collect.maps.traces.getMarkersForPoints
 
 @RunWith(AndroidJUnit4::class)
 class TraceDescriptionTest {
@@ -69,7 +71,9 @@ private class TestTraceDescription(
     override val points: List<MapPoint>,
     override val highlightLastPoint: Boolean,
     private val strokeWidth: Float,
-    private val strokeColor: Int
+    private val strokeColor: Int,
+    override val background: Boolean = false,
+    override val clickable: Boolean = true
 ) : TraceDescription {
     override fun getStrokeWidth(): Float {
         return strokeWidth

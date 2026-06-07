@@ -11,13 +11,11 @@ import org.odk.collect.android.support.rules.TestRuleChain.chain
 
 @RunWith(AndroidJUnit4::class)
 class SaveIncompleteTest {
-    private val pageComposeRule = PageComposeRule()
+
     var rule = CollectTestRule()
 
     @get:Rule
     var chain: RuleChain = chain()
-        .around(pageComposeRule)
-        .around(pageComposeRule.composeRule)
         .around(rule)
 
     @Test
@@ -46,5 +44,24 @@ class SaveIncompleteTest {
             .clickDrafts(1)
             .clickOnForm("Two Question Save Incomplete Required")
             .assertAnswer("Dez")
+    }
+
+    @Test
+    fun savingDraft_doesNotPruneNonRelevantNodes() {
+        rule.startAtMainMenu()
+            .copyForm("one-question-relevance.xml")
+            .startBlankForm("One Question Relevance")
+            .clickOnText("Yes")
+            .swipeToNextQuestion("what is your age")
+            .answerQuestion("what is your age", "30")
+            .swipeToPreviousQuestion("Do you want to continue?")
+            .clickOnText("No")
+            .pressBackAndSaveAsDraft()
+            .clickDrafts(1)
+            .clickOnForm("One Question Relevance")
+            .clickOnQuestion("Do you want to continue?")
+            .clickOnText("Yes")
+            .swipeToNextQuestion("what is your age")
+            .assertAnswer("what is your age", "30")
     }
 }
