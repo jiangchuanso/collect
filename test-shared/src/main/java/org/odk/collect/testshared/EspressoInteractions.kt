@@ -13,7 +13,6 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import org.odk.collect.testshared.EspressoInteractions.clickOn
-import org.odk.collect.testshared.WaitFor.tryAgainOnFail
 
 object EspressoInteractions {
 
@@ -53,10 +52,8 @@ object EspressoInteractions {
      * [click]).
      */
     fun clickOn(view: Matcher<View>, root: Matcher<Root>? = null, assertion: () -> Unit) {
-        tryAgainOnFail {
-            clickOn(view, root)
-            assertion()
-        }
+        clickOn(view, root)
+        assertion()
     }
 
     /**
@@ -76,7 +73,6 @@ object EspressoInteractions {
                 }
 
                 override fun describeTo(description: Description) {
-
                 }
             }
         }

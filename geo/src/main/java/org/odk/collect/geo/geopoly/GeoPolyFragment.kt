@@ -38,15 +38,15 @@ import org.odk.collect.geo.items.MappableData
 import org.odk.collect.geo.items.MappableItemsDelegate
 import org.odk.collect.location.Location
 import org.odk.collect.location.tracker.LocationTracker
-import org.odk.collect.maps.traces.LineDescription
 import org.odk.collect.maps.MapConsts
 import org.odk.collect.maps.MapFragment
 import org.odk.collect.maps.MapFragmentFactory
 import org.odk.collect.maps.MapPoint
 import org.odk.collect.maps.circles.CurrentLocationDelegate
-import org.odk.collect.maps.traces.PolygonDescription
 import org.odk.collect.maps.layers.OfflineMapLayersPickerBottomSheetDialogFragment
 import org.odk.collect.maps.layers.ReferenceLayerRepository
+import org.odk.collect.maps.traces.LineDescription
+import org.odk.collect.maps.traces.PolygonDescription
 import org.odk.collect.settings.SettingsProvider
 import org.odk.collect.strings.R.string
 import org.odk.collect.webpage.WebPageService
@@ -145,10 +145,6 @@ class GeoPolyFragment @JvmOverloads constructor(
         viewModel.points.asLiveData().observe(this) {
             setChangeResult(it)
         }
-
-        if (mappableData != null) {
-            showItemLoading(mappableData)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,6 +169,10 @@ class GeoPolyFragment @JvmOverloads constructor(
 
         viewModel.fixedAlerts.showSnackbar(viewLifecycleOwner, view) {
             SnackbarUtils.SnackbarDetails(getString(string.error_fixed))
+        }
+
+        if (mappableData != null) {
+            showItemLoading(mappableData)
         }
     }
 

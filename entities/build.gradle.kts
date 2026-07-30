@@ -48,13 +48,13 @@ dependencies {
     implementation(project(":strings"))
     implementation(project(":shared"))
     implementation(project(":androidshared"))
+    implementation(project(":analytics"))
     implementation(project(":material"))
     implementation(project(":async"))
     implementation(project(":lists"))
     implementation(project(":forms"))
     implementation(project(":icons"))
 
-    implementation(libs.kotlinStdlib)
     implementation(libs.javarosa) {
         exclude(group = "joda-time")
         exclude(group = "org.hamcrest", module = "hamcrest-all")

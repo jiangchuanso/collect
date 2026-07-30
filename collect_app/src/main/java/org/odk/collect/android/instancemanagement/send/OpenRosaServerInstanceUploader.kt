@@ -1,26 +1,26 @@
 package org.odk.collect.android.instancemanagement.send
 
 import android.net.Uri
-import org.odk.collect.android.utilities.WebCredentialsUtils
-import org.odk.collect.forms.instances.Instance
-import org.odk.collect.forms.instances.InstancesRepository
-import org.odk.collect.openrosa.http.OpenRosaConstants
-import org.odk.collect.openrosa.http.OpenRosaHttpInterface
-import org.odk.collect.settings.keys.ProjectKeys
-import org.odk.collect.shared.settings.Settings
-import timber.log.Timber
-import java.io.File
-import java.net.URI
 import org.odk.collect.analytics.Analytics
 import org.odk.collect.android.analytics.AnalyticsEvents
 import org.odk.collect.android.application.Collect
 import org.odk.collect.android.projects.ProjectDependencyModule
 import org.odk.collect.android.utilities.ResponseMessageParser
+import org.odk.collect.android.utilities.WebCredentialsUtils
 import org.odk.collect.entities.javarosa.parse.toUri
+import org.odk.collect.forms.instances.Instance
+import org.odk.collect.forms.instances.InstancesRepository
 import org.odk.collect.openrosa.http.CaseInsensitiveHeaders
 import org.odk.collect.openrosa.http.HttpHeadResult
+import org.odk.collect.openrosa.http.OpenRosaConstants
+import org.odk.collect.openrosa.http.OpenRosaHttpInterface
 import org.odk.collect.projects.ProjectDependencyFactory
+import org.odk.collect.settings.keys.ProjectKeys
+import org.odk.collect.shared.settings.Settings
 import org.odk.collect.strings.localization.getLocalizedString
+import timber.log.Timber
+import java.io.File
+import java.net.URI
 import java.net.URLDecoder
 import javax.net.ssl.HttpsURLConnection
 
@@ -136,8 +136,8 @@ class OpenRosaServerInstanceUploader(
                     if (headResult.statusCode in HttpsURLConnection.HTTP_OK until HttpsURLConnection.HTTP_MULT_CHOICE) {
                         throw FormUploadException(
                             "Failed to send to $uri. Is this an OpenRosa submission endpoint? " +
-                                    "If you have a web proxy you may need to log in to your network.\n\n" +
-                                    "HEAD request result status code: ${headResult.statusCode}"
+                                "If you have a web proxy you may need to log in to your network.\n\n" +
+                                "HEAD request result status code: ${headResult.statusCode}"
                         )
                     }
                 }
@@ -170,12 +170,12 @@ class OpenRosaServerInstanceUploader(
         try {
             val uri = URI.create(submissionUri.toString())
             val postResult = httpInterface.uploadSubmissionAndFiles(
-                    submissionFile,
-                    files,
-                    uri,
-                    webCredentialsUtils.getCredentials(uri),
-                    contentLength
-                )
+                submissionFile,
+                files,
+                uri,
+                webCredentialsUtils.getCredentials(uri),
+                contentLength
+            )
 
             val responseCode = postResult.responseCode
             messageParser.setMessageResponse(postResult.httpResponse)
@@ -198,14 +198,12 @@ class OpenRosaServerInstanceUploader(
 
                 throw exception
             }
-
         } catch (e: Exception) {
             throw FormUploadException(e.message ?: e.toString())
         }
 
         markSubmissionComplete(instance, instancesRepository)
         logOverrideURL(referrer, overrideURL)
-        logUploadedForm(submissionUri)
 
         return if (messageParser.isValid) {
             messageParser.messageResponse
@@ -287,16 +285,6 @@ class OpenRosaServerInstanceUploader(
                 referrer
             )
         }
-    }
-
-    private fun logUploadedForm(submissionUri: Uri) {
-        val isHttps = "https".equals(submissionUri.scheme, ignoreCase = true)
-
-        Analytics.log(
-            AnalyticsEvents.SUBMISSION,
-            "label",
-            if (isHttps) "HTTPS" else "HTTP",
-        )
     }
 
     companion object {

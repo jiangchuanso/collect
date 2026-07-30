@@ -19,41 +19,21 @@ ant.condition(property: 'os', value: 'unix') {
     os(family: 'unix')
 }
 
-// Build numbers were manually set until 1067
-def LEGACY_BUILD_NUMBER_OFFSET = 1067
-
-// Based on http://stackoverflow.com/questions/17097263#24121734
-def getMasterCommitCount = { ->
+def getVersionName = { ->
     try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
+        return providers.exec {
             switch (ant.properties.os) {
                 case 'windows':
-                    commandLine 'cmd', '/c', 'git', 'rev-list', '--first-parent', '--count', 'master'
+                    commandLine 'cmd', '/c', 'git', 'describe', '--tags', '--dirty', '--always'
                     break
                 case 'unix':
-                    commandLine 'git', 'rev-list', '--first-parent', '--count', 'master'
+                    commandLine 'git', 'describe', '--tags', '--dirty', '--always'
                     break
             }
-            standardOutput = stdout
-        }
-        return Integer.parseInt(stdout.toString().trim())
-    } catch (ignored) {
-        return -1
+        }.getStandardOutput().getAsText().get().trim()
+    } catch (Exception ignored) {
+        return "v0"
     }
-}
-
-def getVersionName = { ->
-    return providers.exec {
-        switch (ant.properties.os) {
-            case 'windows':
-                commandLine 'cmd', '/c', 'git', 'describe', '--tags', '--dirty', '--always'
-                break
-            case 'unix':
-                commandLine 'git', 'describe', '--tags', '--dirty', '--always'
-                break
-        }
-    }.getStandardOutput().getAsText().get().trim()
 }
 
 def secrets = getSecrets()
@@ -241,11 +221,8 @@ configurations.all {
         cacheDynamicVersionsFor(0, 'seconds')
         cacheChangingModulesFor(0, 'seconds')
 
-        force 'org.objenesis:objenesis:2.6'
         force 'org.hamcrest:hamcrest:3.0'
     }
-    
-    transitive = true
 }
 
 dependencies {
@@ -274,7 +251,6 @@ dependencies {
     }
     implementation project(':external-app')
     implementation project(':maps')
-    implementation project(':osmdroid')
     implementation project(':entities')
     implementation project(':crash-handler')
     implementation project(':selfie-camera')
@@ -316,7 +292,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     implementation libs.myanmarCalendar
-    implementation files('libs/bikram-sambat-1.8.0.jar')
+    implementation files('libs/bikram-sambat-1.8.1.jar')
     implementation libs.commonsIo
     implementation (libs.opencsv) {
         exclude group: 'commons-logging'
@@ -368,8 +344,10 @@ dependencies {
     implementation(composeBom)
     implementation(libs.androidXComposeMaterial)
     implementation(libs.androidXConstraintLayoutCompose)
-    implementation(libs.androidXComposeMaterialIcons)
+    implementation(libs.androidXComposeMaterialIconsExtended)
     implementation(libs.androidXComposePreview)
+    implementation(libs.coil)
+    implementation(libs.coil.gif)
 
     testImplementation project(':forms-test')
 
@@ -417,7 +395,7 @@ dependencies {
     androidTestImplementation libs.hamcrest
 
     debugImplementation project(':fragments-test')
-    debugImplementation(project(':test-shared',)) {
+    debugImplementation(project(':test-shared')) {
         exclude group: 'org.robolectric' // Some tests in `collect_app` don't work with newer Robolectric
     }
 
